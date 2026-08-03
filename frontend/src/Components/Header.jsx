@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -8,188 +8,200 @@ import {
   Box,
   Drawer,
   List,
-  ListItem,
   ListItemButton,
   ListItemText,
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom"; // ✅ added useLocation
+  Menu,
+  MenuItem,
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import PhoneEnabledIcon from '@mui/icons-material/PhoneEnabled';
+import adblissLogo from '../assets/Adblisstech.png';
+import ContactModal from './ContactModal';
 
 const navItems = [
-  { label: "Home", path: "/" },
-  { label: "Microsites", path: "/microsites" },
-  { label: "Services", path: "/services" },
-  { label: "About", path: "/about" },
+  { label: 'About us' },
+  {
+    label: 'Centres',
+    dropdown: true,
+    children: ['Bangalore', 'Patna', 'Dubai'],
+  },
+  { label: 'Workspaces', dropdown: true, menuType: 'workspaces' },
+  { label: 'Enterprise Solutions', dropdown: true },
+  { label: 'Investor Relations' },
+  { label: 'Referrals' },
 ];
 
-function ResponsiveHeader() {
+function Header({ activeScreen, onNavigate }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation(); 
+  const [contactOpen, setContactOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [activeMenu, setActiveMenu] = useState('');
 
-  const handleDrawerToggle = () => {
-    setMobileOpen((prevState) => !prevState);
-  };
-
-  const handleGetStart = () => {
-    navigate("/register");
+  const handleDrawerToggle = () => setMobileOpen((prev) => !prev);
+  const handleGetInTouch = () => {
     setMobileOpen(false);
+    setContactOpen(true);
+  };
+  const handleNavigation = (screen) => {
+    onNavigate(screen);
+
+    setMobileOpen(false);
+    handleMenuClose();
+  };
+  const handleMenuOpen = (event, label) => {
+    setAnchorEl(event.currentTarget);
+    setActiveMenu(label);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setActiveMenu('');
   };
 
   const drawer = (
-    <Box sx={{ textAlign: "left" }}>
-      <Typography variant="h6" sx={{ my: 2, textAlign: "center" }}>
-        LOGO
-      </Typography>
+    <Box sx={{ width: 260, p: 2 }} role="presentation" onClick={handleDrawerToggle}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+        <Box
+          component="img"
+          src={adblissLogo}
+          alt="Adbliss logo"
+          sx={{ height: 140, width: 'auto', display: 'block' }}
+        />
+      </Box>
       <List>
         {navItems.map((item) => (
-          <ListItem key={item.label} disablePadding>
-            <ListItemButton
-              component={Link}
-              to={item.path}
-              onClick={handleDrawerToggle}
-              sx={{ textAlign: "center" }}
-            >
-              <ListItemText
-                primary={item.label}
-                sx={{
-                  color:
-                    location.pathname === item.path ? "#11c2f8ff" : "#0A2540", 
-                }}
-              />
+          <Box key={item.label}>
+            <ListItemButton component="a" href="#" onClick={() => item.label === 'About us' && handleNavigation('about')} sx={{ borderRadius: 1, mb: item.children ? 0 : 1 }}>
+              <ListItemText primary={item.label} primaryTypographyProps={{ fontWeight: 600, fontSize: '0.95rem' }} />
             </ListItemButton>
-          </ListItem>
+            {item.children?.map((child) => (
+              <ListItemButton
+                key={child}
+                component="a"
+                href="#"
+                sx={{ borderRadius: 1, mb: 1, pl: 4, bgcolor: '#f8fafc' }}
+              >
+                <ListItemText primary={child} primaryTypographyProps={{ fontWeight: 600, fontSize: '0.9rem' }} />
+              </ListItemButton>
+            ))}
+          </Box>
         ))}
-        <ListItem disablePadding>
-          <ListItemButton onClick={handleGetStart} sx={{ textAlign: "center" }}>
-            <ListItemText primary="Get Start" />
-          </ListItemButton>
-        </ListItem>
       </List>
+      <Button
+        fullWidth
+        variant="contained"
+        onClick={handleGetInTouch}
+        sx={{ mt: 2, backgroundColor: '#0b5cff', color: '#fff', textTransform: 'none', borderRadius: 2 }}
+      >
+        Get in touch
+      </Button>
     </Box>
   );
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar
-        position="fixed"
-        sx={{
-          background: "linear-gradient(90deg, #0A2540 0%, #00C6FF 100%)",
-          color: "#fff",
-          boxShadow: "none",
-          width: "100%",
-          py: 2,
-          zIndex: (theme) => theme.zIndex.appBar,
-        }}
-      >
-        <Toolbar>
-          {/* Mobile Menu Icon */}
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
-          >
-            <MenuIcon />
-          </IconButton>
+    <AppBar position="sticky" elevation={0} sx={{ backgroundColor: '#fff', color: '#111', borderBottom: '1px solid #e2e8f0' }}>
+      <Toolbar sx={{ px: { xs: 2, md: 5 }, py: 0.9, minHeight: 70, justifyContent: { xs: 'space-between', md: 'flex-center' }, gap: { md: 2 } }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mr: { md: 0 } }}>
+          <Box
+            component="img"
+            src={adblissLogo}
+            alt="Adbliss logo"
+            onClick={() => onNavigate('home')}
+            sx={{ height: 100, width: 'auto', display: 'block', cursor: 'pointer' }}
+          />
+        </Box>
 
-          {/* Logo */}
-          <Typography
-            variant="h4"
-            component={Link}
-            to="/"
-            sx={{
-              flexGrow: 1,
-              display: { xs: "none", sm: "block" },
-              textDecoration: "none",
-              color: "inherit",
-              cursor: "pointer",
-            }}
-          >
-            Adbliss<span style={{ color: "#00E0FF" }}>.tech</span>
-          </Typography>
-          <Typography
-            variant="h6"
-            component={Link}
-            to="/"
-            sx={{
-              flexGrow: 1,
-              display: { xs: "block", sm: "none" },
-              textDecoration: "none",
-              color: "inherit",
-              cursor: "pointer",
-            }}
-          >
-              Adbliss<span style={{ color: "#00E0FF" }}>.tech</span> 
-          </Typography>
-
-          {/* Desktop Navigation */}
-          <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            {navItems.map((item) => (
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1, flexWrap: 'wrap', minWidth: 0, position: 'relative' }}>
+          {navItems.map((item) => (
+            <React.Fragment key={item.label}>
               <Button
-                key={item.label}
-                component={Link}
-                to={item.path}
+                href="#"
+                onClick={item.label === 'About us' ? () => handleNavigation('about') : item.children ? (event) => handleMenuOpen(event, item.label) : undefined}
                 sx={{
-                  color: location.pathname === item.path ? "#11c2f8ff " : "#fff", 
-                  fontSize: "1.1rem",
-                  mr: 4,
-                  "&:hover": { color: " #5abeddff" }, 
-                  cursor: "pointer",
+                  color: '#111',
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  fontSize: '0.82rem',
+                  px: 1.3,
+                  '&:hover': { backgroundColor: 'transparent', color: '#0b5cff' },
                 }}
+                endIcon={item.dropdown ? <KeyboardArrowDownIcon sx={{ fontSize: '0.9rem' }} /> : null}
               >
                 {item.label}
               </Button>
-            ))}
-            <Button
-              variant="contained"
-              disableRipple
-              onClick={handleGetStart}
-              sx={{
-                background: "linear-gradient(90deg, #367bbfff 0%, #4ac0e1ff 100%)",
-                color: "#0A2540",
-                borderRadius: "25px",
-                px: 4,
-                py: 1,
-                textTransform: "none",
-                fontWeight: 600,
-                fontSize: "1.2rem",
-                "&:hover": {
-                  background: "linear-gradient(90deg, #6dc9e3ff 0%, #1f65aaff 100%)",
-                  color: "#0A2540",
-                },
-                cursor: "pointer",
-              }}
-            >
-              Get Start
-            </Button>
-          </Box>
-        </Toolbar>
-      </AppBar>
+              {item.dropdown && activeMenu === item.label ? (
+                item.menuType === 'workspaces' ? (
+                  <Box sx={{ position: 'absolute', top: '100%', left: 0, mt: 1, bgcolor: '#fff', border: '1px solid #e2e8f0', boxShadow: '0 25px 50px rgba(15, 23, 42, 0.08)', p: 3, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 4, zIndex: 1300, minWidth: 520 }}>
+                    <Box>
+                      <Typography sx={{ fontWeight: 700, fontSize: '1rem', mb: 2 }}>Office spaces</Typography>
+                      <Typography sx={{ color: '#475569', mb: 2 }}>Ready-to-move-in or customisable private offices</Typography>
+                      <Typography sx={{ fontWeight: 700, fontSize: '1rem', mb: 2 }}>Coworking spaces</Typography>
+                      <Typography sx={{ color: '#475569', mb: 2 }}>Coworking spaces for the hour, day, or month</Typography>
+                      <Typography sx={{ fontWeight: 700, fontSize: '1rem', mb: 2 }}>Additional solutions</Typography>
+                      <Typography sx={{ color: '#475569' }}>Solutions that go beyond workspaces</Typography>
+                    </Box>
+                    <Box sx={{ borderLeft: { md: '1px solid #e2e8f0' }, pl: { md: 4 } }}>
+                      <Typography sx={{ fontWeight: 700, fontSize: '1rem', mb: 2 }}>Private Offices</Typography>
+                      <Typography sx={{ color: '#475569', mb: 2 }}>Fully-equipped, ready to move in or customisable private WeWork offices</Typography>
+                      <Typography sx={{ fontWeight: 700, fontSize: '1rem', mb: 2 }}>Managed Offices</Typography>
+                      <Typography sx={{ color: '#475569' }}>Office spaces sourced, designed, built, and operated for your business</Typography>
+                    </Box>
+                  </Box>
+                ) : (
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleMenuClose}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                    transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+                  >
+                    {item.children?.map((child) => (
+                      <MenuItem key={child} onClick={handleMenuClose} component="a" href="#">
+                        {child}
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                )
+              ) : null}
+            </React.Fragment>
+          ))}
+        </Box>
 
-      {/* Spacer */}
-      <Toolbar />
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1.1 }}>
+          
+          <Button onClick={() => onNavigate('login')} sx={{ color: '#111', textTransform: 'none', fontWeight: 600, fontSize: '0.82rem' }}>
+            Log in
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleGetInTouch}
+            sx={{
+              backgroundColor: '#0b5cff',
+              color: '#fff',
+              borderRadius: '10px',
+              textTransform: 'none',
+              px: 2.2,
+              py: 0.95,
+              fontWeight: 700,
+              fontSize: '0.85rem',
+              '&:hover': { backgroundColor: '#0945c5' },
+            }}
+          >
+            Get in touch
+          </Button>
+        </Box>
 
-      {/* Drawer for Mobile */}
-      <nav>
-        <Drawer
-          anchor="left"
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{ keepMounted: true }}
-          sx={{
-            display: { xs: "block", sm: "none" },
-            "& .MuiDrawer-paper": { boxSizing: "border-box", width: 240 },
-          }}
-        >
-          {drawer}
-        </Drawer>
-      </nav>
-    </Box>
+        <IconButton edge="end" aria-label="open menu" onClick={handleDrawerToggle} sx={{ display: { xs: 'flex', md: 'none' }, color: '#111' }}>
+          <MenuIcon />
+        </IconButton>
+      </Toolbar>
+
+      <Drawer anchor="right" open={mobileOpen} onClose={handleDrawerToggle}>
+        {drawer}
+      </Drawer>
+      <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
+    </AppBar>
   );
 }
 
-export default ResponsiveHeader;
+export default Header;
