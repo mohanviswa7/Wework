@@ -9,7 +9,8 @@ const PORT = process.env.PORT || 5001;
 const MONGODB_USER = process.env.MONGODB_USER || '';
 const MONGODB_PASS = process.env.MONGODB_PASS || '';
 const MONGODB_HOSTS = process.env.MONGODB_HOSTS || 'ac-pxkbgnu-shard-00-00.asrprew.mongodb.net:27017,ac-pxkbgnu-shard-00-01.asrprew.mongodb.net:27017,ac-pxkbgnu-shard-00-02.asrprew.mongodb.net:27017';
-const MONGODB_URI = process.env.MONGODB_URI || `mongodb://${MONGODB_USER && MONGODB_PASS ? `${encodeURIComponent(MONGODB_USER)}:${encodeURIComponent(MONGODB_PASS)}@` : ''}${MONGODB_HOSTS}/?replicaSet=atlas-qizmrs-shard-0&ssl=true&authSource=admin`;
+const configuredMongoUri = process.env.MONGODB_URI?.trim().replace(/^['"]|['"]$/g, '');
+const MONGODB_URI = configuredMongoUri || `mongodb://${MONGODB_USER && MONGODB_PASS ? `${encodeURIComponent(MONGODB_USER)}:${encodeURIComponent(MONGODB_PASS)}@` : ''}${MONGODB_HOSTS}/?replicaSet=atlas-qizmrs-shard-0&ssl=true&authSource=admin`;
 const DB_NAME = process.env.MONGODB_DB || 'intelvpro';
 const COLLECTION_NAME = 'submissions';
 const submissionsPath = path.resolve('submissions.json');
@@ -20,6 +21,7 @@ app.use(express.json());
 
 let useMongo = false;
 let collection;
+let client;
 
 const ensureSubmissionsFile = () => {
   if (!fs.existsSync(submissionsPath)) {
@@ -46,10 +48,12 @@ const writeSubmissions = (submissions) => {
   }
 };
 
-const client = new MongoClient(MONGODB_URI, { connectTimeoutMS: 10000, serverSelectionTimeoutMS: 10000 });
-
 async function initializeDatabase() {
   try {
+    if (!/^mongodb(?:\+srv)?:\/\//.test(MONGODB_URI)) {
+      throw new Error('MONGODB_URI must start with mongodb:// or mongodb+srv://');
+    }
+    client = new MongoClient(MONGODB_URI, { connectTimeoutMS: 10000, serverSelectionTimeoutMS: 10000 });
     await client.connect();
     const db = client.db(DB_NAME);
     collection = db.collection(COLLECTION_NAME);
@@ -71,7 +75,11 @@ async function startServer(callback) {
 }
 
 app.get('/', (req, res) => {
-  res.send('IntelVpro backend is running');
+  res.json({ status: 'ok', service: 'IntelVpro backend', database: useMongo ? 'mongodb' : 'local-fallback' });
+});
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', database: useMongo ? 'mongodb' : 'local-fallback' });
 });
 
 app.get('/api/submissions', async (req, res) => {
