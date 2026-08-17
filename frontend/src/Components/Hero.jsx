@@ -119,7 +119,7 @@ const Hero = () => {
   return (
     <Box sx={{ backgroundColor: '#f8fafc', minHeight: '100vh', py: { xs: 5, md: 8 } }}>
       <Container maxWidth="xl">
-        <Box sx={{ position: 'relative', width: '100%', minHeight: { xs: '520px', md: '720px' }, overflow: 'hidden', borderRadius: 0, boxShadow: '0 40px 90px rgba(15, 23, 42, 0.12)' }}>
+        <Box id="membership-form" sx={{ position: 'relative', width: '100%', minHeight: { xs: '520px', md: '720px' }, overflow: 'hidden', borderRadius: 0, boxShadow: '0 40px 90px rgba(15, 23, 42, 0.12)' }}>
           <Box component="img" src={heroImage} alt="Workspace showcase" sx={{ position: 'absolute', inset: 0, width: '78%', height: '85%', ml: '300px', mt: '24px', objectFit: 'cover', objectPosition: 'left center', display: 'block' }} />
 
           <Box sx={{ position: 'absolute', left: { xs: '4%', md: '6%' }, top: { xs: '8%', md: '10%' }, width: { xs: '92%', md: '48%' }, mr: '400px', backgroundColor: '#fff', borderRadius: 0, border: '1px solid #e2e8f0', boxShadow: '0 40px 90px rgba(15, 23, 42, 0.12)', p: { xs: 3, md: 4 } }}>

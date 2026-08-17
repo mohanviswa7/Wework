@@ -16,7 +16,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import PhoneEnabledIcon from '@mui/icons-material/PhoneEnabled';
-import adblissLogo from '../assets/Adblisstech.png';
+import weworkLogo from '../assets/wework-india-logo.svg';
 import ContactModal from './ContactModal';
 
 const navItems = [
@@ -26,10 +26,10 @@ const navItems = [
     dropdown: true,
     children: ['Bangalore', 'Patna', 'Dubai'],
   },
-  { label: 'Workspaces', dropdown: true, menuType: 'workspaces' },
-  { label: 'Enterprise Solutions', dropdown: true },
-  { label: 'Investor Relations' },
-  { label: 'Referrals' },
+  // { label: 'Workspaces', dropdown: true, menuType: 'workspaces' },
+  // { label: 'Enterprise Solutions', dropdown: true },
+  // { label: 'Investor Relations' },
+  // { label: 'Referrals' },
 ];
 
 function Header({ activeScreen, onNavigate }) {
@@ -63,9 +63,9 @@ function Header({ activeScreen, onNavigate }) {
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
         <Box
           component="img"
-          src={adblissLogo}
-          alt="Adbliss logo"
-          sx={{ height: 140, width: 'auto', display: 'block' }}
+          src={weworkLogo}
+          alt="WeWork India logo"
+          sx={{ height: 72, width: 'auto', display: 'block' }}
         />
       </Box>
       <List>
@@ -104,10 +104,10 @@ function Header({ activeScreen, onNavigate }) {
         <Box sx={{ display: 'flex', alignItems: 'center', mr: { md: 0 } }}>
           <Box
             component="img"
-            src={adblissLogo}
-            alt="Adbliss logo"
+            src={weworkLogo}
+            alt="WeWork India logo"
             onClick={() => onNavigate('home')}
-            sx={{ height: 100, width: 'auto', display: 'block', cursor: 'pointer' }}
+            sx={{ height: 58, width: 'auto', display: 'block', cursor: 'pointer' }}
           />
         </Box>
 

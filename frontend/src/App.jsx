@@ -4,6 +4,7 @@ import Hero from './Components/Hero';
 import About from './Components/About';
 import Login from './Components/Login';
 import Lenopage from './Components/Lenopage';
+import Pricing from './Components/Pricing';
 
 function App() {
   const [activeScreen, setActiveScreen] = useState('home');
@@ -18,7 +19,10 @@ function App() {
       ) : activeScreen === 'leno' ? (
         <Lenopage onNavigate={setActiveScreen} />
       ) : (
-        <Hero />
+        <>
+          <Hero />
+          <Pricing />
+        </>
       )}
     </>
   );
