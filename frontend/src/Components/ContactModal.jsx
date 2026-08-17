@@ -33,16 +33,24 @@ function ContactModal({ open, onClose }) {
   const [submitting, setSubmitting] = useState(false);
   const [snack, setSnack] = useState({ open: false, severity: 'success', message: '' });
   const [desksCount, setDesksCount] = useState(form.desks || 1);
+  const [phoneError, setPhoneError] = useState('');
+  const [submitted, setSubmitted] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const nextValue = name === 'phone' ? value.replace(/\D/g, '').slice(0, 10) : value;
+    setForm((prev) => ({ ...prev, [name]: nextValue }));
+    if (name === 'phone') setPhoneError('');
   };
 
   const handleSubmit = async () => {
     const { fullName, companyName, email, phone } = form;
     if (!fullName || !companyName || !email || !phone) {
       setSnack({ open: true, severity: 'error', message: 'Please fill required fields (name, company, email, phone)' });
+      return;
+    }
+    if (!/^[6-9]\d{9}$/.test(phone)) {
+      setPhoneError('Enter a valid 10-digit mobile number starting with 6, 7, 8, or 9');
       return;
     }
     setSubmitting(true);
@@ -54,10 +62,7 @@ function ContactModal({ open, onClose }) {
       });
       const data = await res.json();
       if (res.ok) {
-        setSnack({ open: true, severity: 'success', message: 'Submitted successfully' });
-        onClose();
-        setForm({ fullName: '', companyName: '', email: '', phone: '', city: '', area: '', workspaceType: '', desks: 1 });
-        setDesksCount(1);
+        setSubmitted(true);
       } else {
         setSnack({ open: true, severity: 'error', message: data.error || 'Submission failed' });
       }
@@ -69,12 +74,26 @@ function ContactModal({ open, onClose }) {
     }
   };
 
+  const handleClose = () => {
+    onClose();
+    setSubmitted(false);
+    setPhoneError('');
+    setForm({ fullName: '', companyName: '', email: '', phone: '', city: '', area: '', workspaceType: '', desks: 1 });
+    setDesksCount(1);
+  };
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth PaperProps={{ sx: { minHeight: '72vh' } }}>
-      <DialogTitle>
-        Got questions? We've got answers.
-      </DialogTitle>
+      <DialogTitle>{submitted ? 'Thank you for getting in touch!' : "Got questions? We've got answers."}</DialogTitle>
       <DialogContent sx={{ pt: 0 }}>
+        {submitted ? (
+          <Box sx={{ py: 6, textAlign: 'center' }}>
+            <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>Your request has been received.</Typography>
+            <Typography sx={{ color: 'text.secondary', lineHeight: 1.7 }}>
+              Thank you for your interest. Our team will contact you soon with more information.
+            </Typography>
+          </Box>
+        ) : <>
         <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
           Get in touch with us for more information on any of the products or services we offer
         </Typography>
@@ -136,6 +155,9 @@ function ContactModal({ open, onClose }) {
                 name="phone"
                 value={form.phone}
                 onChange={handleChange}
+                error={Boolean(phoneError)}
+                helperText={phoneError || 'Enter a 10-digit mobile number'}
+                inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', maxLength: 10 }}
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 8 }, '& .MuiInputBase-input': { py: 2, fontSize: '1rem' } }}
               />
             </Grid>
@@ -214,12 +236,15 @@ function ContactModal({ open, onClose }) {
                 </FormControl>
               </Grid>
         </Box>
+        </>}
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button variant="contained" onClick={handleSubmit} disabled={submitting}>
-          Submit
-        </Button>
+        {submitted ? <Button variant="contained" onClick={handleClose}>Close</Button> : <>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button variant="contained" onClick={handleSubmit} disabled={submitting}>
+            {submitting ? 'Submitting...' : 'Submit'}
+          </Button>
+        </>}
       </DialogActions>
       <Snackbar open={snack.open} autoHideDuration={4000} onClose={() => setSnack((s) => ({ ...s, open: false }))}>
         <Alert onClose={() => setSnack((s) => ({ ...s, open: false }))} severity={snack.severity} sx={{ width: '100%' }}>
