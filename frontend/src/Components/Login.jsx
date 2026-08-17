@@ -38,9 +38,9 @@ function Login({ onLogin }) {
         </Paper>
 
         <Paper elevation={4} sx={{ p: { xs: 4, md: 6 }, borderRadius: 3, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <Typography variant="h4" sx={{ mb: 2, fontWeight: 700 }}>
+          {/* <Typography variant="h4" sx={{ mb: 2, fontWeight: 700 }}>
             Login
-          </Typography>
+          </Typography> */}
           <Typography sx={{ color: '#64748b', mb: 4 }}>
             Enter your company credentials to continue.
           </Typography>
