@@ -242,6 +242,12 @@ function ContactModal({ open, onClose }) {
               </Grid>
         </Box>
       </DialogContent>
+      <Typography sx={{ px: 3, color: 'text.secondary', fontSize: '0.8rem' }}>
+        By submitting this form, you agree to our{' '}
+        <Box component="a" href="/privacy-policy.html" target="_blank" rel="noopener noreferrer" sx={{ color: '#0b5cff', fontWeight: 700, textDecoration: 'underline' }}>
+          Privacy Policy
+        </Box>.
+      </Typography>
       <DialogActions sx={{ px: 3, pb: 2 }}>
           <Button onClick={onClose}>Cancel</Button>
           <Button variant="contained" onClick={handleSubmit} disabled={submitting}>

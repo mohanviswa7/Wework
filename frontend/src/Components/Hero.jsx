@@ -184,7 +184,15 @@ const Hero = () => {
               By clicking the button, you agree to our{' '}
               <Box component="span" sx={{ color: '#1d4ed8', fontWeight: 700 }}>Terms of Service</Box>{' '}
               and confirm that you have read and understood our{' '}
-              <Box component="span" sx={{ color: '#1d4ed8', fontWeight: 700 }}>Privacy Policy</Box>.
+              <Box
+                component="a"
+                href="/privacy-policy.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{ color: '#1d4ed8', fontWeight: 700, textDecoration: 'underline' }}
+              >
+                Privacy Policy
+              </Box>.
             </Typography>
           </Box>
 
