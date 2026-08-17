@@ -20,6 +20,8 @@ import {
 } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';
+
 function ContactModal({ open, onClose }) {
   const [form, setForm] = useState({
     fullName: '',
@@ -56,7 +58,7 @@ function ContactModal({ open, onClose }) {
     }
     setSubmitting(true);
     try {
-      const res = await fetch('http://localhost:5001/api/register', {
+      const res = await fetch(`${API_BASE_URL}/api/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, desks: desksCount }),

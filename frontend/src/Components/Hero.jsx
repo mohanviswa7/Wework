@@ -20,27 +20,6 @@ import heroImage from '../assets/Packbackground.avif';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';
 
-const freeEmailDomains = [
-  '@gmail.com',
-  '@googlemail.com',
-  '@yahoo.com',
-  '@hotmail.com',
-  '@outlook.com',
-  '@live.com',
-  '@aol.com',
-  '@icloud.com',
-  '@mail.com',
-  '@protonmail.com',
-];
-
-const validateEmail = (email) => {
-  if (!email.trim()) return 'Company e-mail is required';
-  const normalized = email.trim().toLowerCase();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) return 'Enter a valid e-mail address';
-  if (freeEmailDomains.some((domain) => normalized.endsWith(domain))) return 'Use your official company e-mail address';
-  return '';
-};
-
 const validatePhone = (phone) => {
   if (!phone.trim()) return 'Phone number is required';
   const trimmed = phone.trim();
@@ -82,8 +61,7 @@ const Hero = () => {
     if (!formData.companyName.trim()) nextErrors.companyName = 'Company name is required';
     const phoneError = validatePhone(formData.phone);
     if (phoneError) nextErrors.phone = phoneError;
-    const emailError = validateEmail(formData.email);
-    if (emailError) nextErrors.email = emailError;
+    if (!formData.email.trim()) nextErrors.email = 'Company e-mail is required';
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -180,11 +158,11 @@ const Hero = () => {
                   <TextField
                     fullWidth
                     label="Company E-mail address*"
-                    type="email"
+                    type="text"
                     value={formData.email}
                     onChange={handleFieldChange('email')}
                     error={Boolean(errors.email)}
-                    helperText={errors.email || 'Use your official company e-mail address'}
+                    helperText={errors.email || 'Enter your e-mail address'}
                     variant="outlined"
                     sx={{ '& .MuiOutlinedInput-root': { borderRadius: 0 } }}
                   />
