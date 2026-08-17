@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
+  Fade,
   TextField,
   Button,
   Box,
@@ -18,6 +19,7 @@ import {
   IconButton,
   Stack,
 } from '@mui/material';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 function ContactModal({ open, onClose }) {
   const [form, setForm] = useState({
@@ -62,7 +64,10 @@ function ContactModal({ open, onClose }) {
       });
       const data = await res.json();
       if (res.ok) {
+        onClose();
         setSubmitted(true);
+        setForm({ fullName: '', companyName: '', email: '', phone: '', city: '', area: '', workspaceType: '', desks: 1 });
+        setDesksCount(1);
       } else {
         setSnack({ open: true, severity: 'error', message: data.error || 'Submission failed' });
       }
@@ -82,18 +87,17 @@ function ContactModal({ open, onClose }) {
     setDesksCount(1);
   };
 
+  useEffect(() => {
+    if (!submitted) return undefined;
+    const timeoutId = setTimeout(handleClose, 5000);
+    return () => clearTimeout(timeoutId);
+  }, [submitted]);
+
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth PaperProps={{ sx: { minHeight: '72vh' } }}>
-      <DialogTitle>{submitted ? 'Thank you for getting in touch!' : "Got questions? We've got answers."}</DialogTitle>
+    <>
+    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth PaperProps={{ sx: { minHeight: '72vh' } }}>
+      <DialogTitle>Got questions? We've got answers.</DialogTitle>
       <DialogContent sx={{ pt: 0 }}>
-        {submitted ? (
-          <Box sx={{ py: 6, textAlign: 'center' }}>
-            <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>Your request has been received.</Typography>
-            <Typography sx={{ color: 'text.secondary', lineHeight: 1.7 }}>
-              Thank you for your interest. Our team will contact you soon with more information.
-            </Typography>
-          </Box>
-        ) : <>
         <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
           Get in touch with us for more information on any of the products or services we offer
         </Typography>
@@ -236,15 +240,12 @@ function ContactModal({ open, onClose }) {
                 </FormControl>
               </Grid>
         </Box>
-        </>}
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        {submitted ? <Button variant="contained" onClick={handleClose}>Close</Button> : <>
           <Button onClick={onClose}>Cancel</Button>
           <Button variant="contained" onClick={handleSubmit} disabled={submitting}>
             {submitting ? 'Submitting...' : 'Submit'}
           </Button>
-        </>}
       </DialogActions>
       <Snackbar open={snack.open} autoHideDuration={4000} onClose={() => setSnack((s) => ({ ...s, open: false }))}>
         <Alert onClose={() => setSnack((s) => ({ ...s, open: false }))} severity={snack.severity} sx={{ width: '100%' }}>
@@ -252,6 +253,41 @@ function ContactModal({ open, onClose }) {
         </Alert>
       </Snackbar>
     </Dialog>
+    <Fade in={submitted} timeout={450}>
+      <Dialog
+        open={submitted}
+        onClose={handleClose}
+        TransitionComponent={Fade}
+        transitionDuration={450}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{
+          sx: {
+            overflow: 'visible',
+            borderRadius: 4,
+            textAlign: 'center',
+            px: { xs: 2, sm: 3 },
+            py: 3,
+            animation: 'successPop 0.55s cubic-bezier(0.22, 1, 0.36, 1)',
+            '@keyframes successPop': {
+              '0%': { opacity: 0, transform: 'translateY(18px) scale(0.9)' },
+              '100%': { opacity: 1, transform: 'translateY(0) scale(1)' },
+            },
+          },
+        }}
+      >
+        <DialogContent>
+          <Box sx={{ display: 'grid', placeItems: 'center', width: 76, height: 76, mx: 'auto', mb: 2, borderRadius: '50%', color: '#fff', background: 'linear-gradient(135deg, #0b5cff, #24b47e)', boxShadow: '0 12px 30px rgba(11, 92, 255, 0.25)' }}>
+            <CheckCircleOutlineIcon sx={{ fontSize: 48 }} />
+          </Box>
+          <Typography component="h2" sx={{ fontWeight: 800, fontSize: '1.8rem', mb: 1 }}>Thank you!</Typography>
+          <Typography sx={{ color: 'text.secondary', fontSize: '1rem', lineHeight: 1.7 }}>
+            Your request has been received. Our team will contact you soon.
+          </Typography>
+        </DialogContent>
+      </Dialog>
+    </Fade>
+    </>
   );
 }
 
