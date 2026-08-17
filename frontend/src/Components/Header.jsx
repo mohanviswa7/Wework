@@ -169,9 +169,9 @@ function Header({ activeScreen, onNavigate }) {
 
         <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1.1 }}>
           
-          <Button onClick={() => onNavigate('login')} sx={{ color: '#111', textTransform: 'none', fontWeight: 600, fontSize: '0.82rem' }}>
+          {/* <Button onClick={() => onNavigate('login')} sx={{ color: '#111', textTransform: 'none', fontWeight: 600, fontSize: '0.82rem' }}>
             Log in
-          </Button>
+          </Button> */}
           <Button
             variant="contained"
             onClick={handleGetInTouch}
