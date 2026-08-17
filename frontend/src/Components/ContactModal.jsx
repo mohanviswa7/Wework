@@ -4,7 +4,6 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Fade,
   TextField,
   Button,
   Box,
@@ -253,12 +252,10 @@ function ContactModal({ open, onClose }) {
         </Alert>
       </Snackbar>
     </Dialog>
-    <Fade in={submitted} timeout={450}>
-      <Dialog
-        open={submitted}
-        onClose={handleClose}
-        TransitionComponent={Fade}
-        transitionDuration={450}
+    <Dialog
+      open={submitted}
+      onClose={handleClose}
+      transitionDuration={450}
         maxWidth="xs"
         fullWidth
         PaperProps={{
@@ -285,8 +282,7 @@ function ContactModal({ open, onClose }) {
             Your request has been received. Our team will contact you soon.
           </Typography>
         </DialogContent>
-      </Dialog>
-    </Fade>
+    </Dialog>
     </>
   );
 }
